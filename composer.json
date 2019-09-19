@@ -1,0 +1,28 @@
+{
+    "name": "netxoopackage/netxoopackage",
+    "description": "",
+    "license": "MIT",
+    "keywords": ["netxoopackage"],
+    "type": "project",
+    "authors": [
+        {
+            "name": "netxoopackage",
+            "email": "netxoopackage@email.com"
+        }
+    ],
+    "autoload": {
+        "files": [
+            "core/bootstrap.php"
+        ],
+        "psr-4": {
+            "App\\": "app/",
+            "Core\\": "core/"
+        }
+    },
+    "require": {
+        "php": ">=5.6.4",
+        "ext-pdo": "*",
+        "ext-json": "*",
+        "phpmailer/phpmailer": "^6.0"
+    }
+}

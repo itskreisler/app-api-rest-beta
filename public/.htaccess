@@ -1,0 +1,30 @@
+<IfModule mod_rewrite.c>
+Options -Multiviews
+RewriteEngine On
+RewriteBase /public
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^(.*)$ index.php [QSA,L]
+#RewriteCond %{HTTPS} off
+#RewriteRule ^(.*)$ https://%{HTTP_HOST} [L,R=301]
+#Bloquea el accceso a los archivos para dominios externos
+#RewriteCond %{HTTP_REFERER} !^$
+#RewriteCond %{HTTP_REFERER} !^http://(www.)?coffeexpression.web/.*$ [NC]
+#RewriteRule .(jpg|jpeg|gif|png|bmp)$ - [F]
+#Permite el acceso a peticiones desde otro dominio
+#Header set Access-Control-Allow-Origin "*"
+#Se desconoe su funcionalidad#SetEnvIf Origin "^(.*\.prueba.coffeexpression\.com)$" ORIGIN_SUB_DOMAIN=$1
+#Se desconoe su funcionalidad#Header set Access-Control-Allow-Origin "%{ORIGIN_SUB_DOMAIN}e" env=ORIGIN_SUB_DOMAIN
+#Se desconoe su funcionalidad#Header set Access-Control-Allow-Headers: "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+#deny from 000.000.000.000
+# Establecer zona horaria
+SetEnv TZ America/Bogota
+# PHP Memory Limit
+#php_value memory_limit 128M
+#Restringe el acceso con contraseña
+#AuthName "Restricted Area"
+#AuthType Basic
+#AuthUserFile C:\xampp\htdocs\coffeexpression-scripts-developer\coffeexpression\public/.htpasswd
+#require valid-user
+#require user usuario
+</IfModule>
