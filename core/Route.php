@@ -3,6 +3,7 @@
 namespace Core;
 
 use stdClass;
+use Core\Auth;
 class Route
 {
     private $routes;
@@ -47,6 +48,11 @@ class Route
             }
             $param[] = $this->getRequest();
             if ($url == $route[0] && $_SERVER['REQUEST_METHOD'] == $route[4] && !$route[3]) {
+                $found = true;
+                $controller = $route[1];
+                $action = $route[2];
+                break;
+            }else if($url == $route[0] && $_SERVER['REQUEST_METHOD'] == $route[4] && (new Auth())->check()){
                 $found = true;
                 $controller = $route[1];
                 $action = $route[2];
