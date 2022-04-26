@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Core\DataBase;
 
-class RenderModels
+class ConnectArray
 {
     protected $data = [];
     protected $build = null;

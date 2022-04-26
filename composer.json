@@ -2,7 +2,11 @@
     "name": "app/api",
     "description": "Aplicacion en php que puede funcionar como api",
     "license": "MIT",
-    "keywords": ["app","api"],
+    "keywords": [
+        "app",
+        "api",
+        "require \"team-reflex/discord-php\": \"dev-master\""
+    ],
     "type": "project",
     "authors": [
         {
@@ -20,9 +24,12 @@
         }
     },
     "require": {
-        "php": ">=5.6.4",
+        "php": ">=8.0",
         "ext-pdo": "*",
         "ext-json": "*",
-        "phpmailer/phpmailer": "^6.0"
+        "phpmailer/phpmailer": "^6.1",
+        "jajo/jsondb": "^3.0",
+        "vlucas/phpdotenv": "^5.4",
+        "statickidz/php-google-translate-free": "^1.2.1"
     }
 }

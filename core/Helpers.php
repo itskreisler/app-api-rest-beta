@@ -1,8 +1,10 @@
 <?php
 
 namespace Core;
+
 class Helpers
 {
+
     public static function unicode_urldecode($url)
     {
         preg_match_all('/%u([[:alnum:]]{4})/', $url, $a);
@@ -101,7 +103,6 @@ class Helpers
 
                         if ($isTerminal) {
                             echo $type . ($type_length !== null ? "(" . $type_length . ")" : "") . "\n";
-
                         } else {
                             $id = substr(md5(rand() . ":" . $key . ":" . $level), 0, 8);
 
@@ -137,13 +138,11 @@ class Helpers
                     if (!$isTerminal) {
                         echo "</div>";
                     }
-
                 } else {
                     echo $isTerminal ?
                         $type . ($type_length !== null ? "(" . $type_length . ")" : "") . "  " :
                         "<span style='color:#666666'>" . $type . ($type_length !== null ? "(" . $type_length . ")" : "") . "</span>&nbsp;&nbsp;";
                 }
-
             } else {
                 echo $isTerminal ?
                     $type . ($type_length !== null ? "(" . $type_length . ")" : "") . "  " :
@@ -211,10 +210,94 @@ class Helpers
         return $fileName;
     }
 
-    /**/
-    public static function jsonencode($array = [], $options = JSON_UNESCAPED_UNICODE, $header = "Content-type: application/json; charset=utf-8")
+    /*
+    * Esta funcion formatea en JSON
+    */
+    public static function jsonencode($array = [], $options = JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT, $header = "Content-type: application/json; charset=utf-8")
     {
         header($header);
-        return json_encode($array, $options);
+        $json = json_encode($array, $options);
+        if ($json === false) {
+            $json = json_encode(["jsonError" => json_last_error_msg()], $options);
+            if ($json === false) {
+                // This should not happen, but we go all the way now:
+                $json = '{"jsonError":"unknown"}';
+            }
+            // Set HTTP response status code to: 500 - Internal Server Error
+            http_response_code(500);
+        }
+        return $json;
+    }
+    public static function getDirFiles($dirName, $optional = false)
+    {
+        $result = [];
+        if (file_exists($dirName)) {
+            $d = scandir($dirName);
+            //return $d;
+            foreach ($d as $item => $value) {
+                if (is_dir("$dirName/$value") && $value !== "." && $value !== "..") {
+                    $result[] = ["folder" => $value, "files" => self::getDirFiles("$dirName/$value", $value)];
+                    //array_push($result, ["folder"=>$value,"files"=>getDirFiles("$dirName/$value")]);
+                } else {
+                    if ($value !== "." && $value !== "..") {
+                        $result[] = "{$dirName}{$optional}\\{$value}";
+                        //array_push($result, "$dirName/$value");
+                    }
+                }
+            }
+            return $result;
+        } else {
+            return ["Directorio no existe"];
+        }
+    }
+
+    public static function url_exists($url = NULL)
+    {
+
+        if (empty($url)) {
+            return false;
+        }
+
+        $ch = curl_init($url);
+
+        // Establecer un tiempo de espera
+        curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+
+        // Establecer NOBODY en true para hacer una solicitud tipo HEAD
+        curl_setopt($ch, CURLOPT_NOBODY, true);
+        // Permitir seguir redireccionamientos
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        // Recibir la respuesta como string, no output
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+        // Descomentar si tu servidor requiere un user-agent, referrer u otra configuración específica
+        // $agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.102 Safari/537.36';
+        // curl_setopt($ch, CURLOPT_USERAGENT, $agent)
+
+        $data = curl_exec($ch);
+
+        // Obtener el código de respuesta
+        $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        //cerrar conexión
+        curl_close($ch);
+
+        // Aceptar solo respuesta 200 (Ok), 301 (redirección permanente) o 302 (redirección temporal)
+        $accepted_response = array(200, 301, 302);
+        if (in_array($httpcode, $accepted_response)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static function strip_html_tags($str, $exp = '/<[^>]*>/'):string
+    {
+        if (($str == null) || ($str == '')) {
+            return false;
+        } else {
+            $str = $str;
+        }
+        return preg_replace($exp, '', $str);
     }
 }

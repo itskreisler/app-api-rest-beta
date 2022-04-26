@@ -2,18 +2,20 @@
 
 namespace Core;
 
+use stdClass;
 class Route
 {
     private $routes;
 
-    public function __construct(array $routes)
+    public function __construct()
     {
-        $this->setRoutes($routes);
+        $this->setRoutes(Routing::getall());
         $this->run();
     }
 
     private function setRoutes($routes)
     {
+        $newRoutes=[];
         foreach ($routes as $route) {
             $explode = explode('@', $route[1]);
             if (isset($route[2])) {
@@ -28,9 +30,11 @@ class Route
 
     private function run()
     {
-        $url = $this->getUrl();
+        $url = strtolower($this->getUrl());
         $urlArray = explode('/', $url);
-
+        $param = [];
+        $controller = null;
+        $action = null;
         foreach ($this->routes as $route) {
             $routeArray = explode('/', $route[0]);
             $param = [];
@@ -39,39 +43,28 @@ class Route
                     $routeArray[$i] = $urlArray[$i];
                     $param[] = $urlArray[$i];
                 }
-                $route[0] = implode($routeArray, '/');
+                $route[0] = implode('/', $routeArray);
             }
-            if ($url == $route[0] && $_SERVER['REQUEST_METHOD'] == $route[4]) {
+            $param[] = $this->getRequest();
+            if ($url == $route[0] && $_SERVER['REQUEST_METHOD'] == $route[4] && !$route[3]) {
                 $found = true;
                 $controller = $route[1];
                 $action = $route[2];
-                $auth = new Auth;
-                if (isset($route[3]) && $route[3] == 'auth' && !$auth->check()) {
-                    $action = 'forbiden';
-                }
                 break;
             }
         }
 
         if (isset($found)) {
             $controller = Container::newController($controller);
-            switch (count($param)) {
-                case 1:
-                    $controller->$action($param[0], $this->getRequest());
-                    break;
-                case 2:
-                    $controller->$action($param[0], $param[1], $this->getRequest());
-                    break;
-                case 3:
-                    $controller->$action($param[0], $param[1], $param[2], $this->getRequest());
-                    break;
-                default:
-                    $controller->$action($this->getRequest());
-                    break;
-            }
+            call_user_func_array([$controller, $action], $param);
 
         } else {
-            Container::pageNotFound();
+            echo Helpers::jsonencode([
+                'code' => '404',
+                'status' => 'error',
+                'message' => 'No tienes permisos para ver esta ruta',
+                'url'=> $url
+            ]);
         }
     }
 
@@ -90,16 +83,18 @@ class Route
 
     private function getRequest()
     {
-        $obj = new \stdClass;
+        $obj = new stdClass;
+        $get = new stdClass;
+        $post = new stdClass;
 
         foreach ($_GET as $key => $value) {
-            @$obj->get->$key = $value;
+            @$get->$key = $value;
         }
-
+        $obj->get = $get;
         foreach ($_POST as $key => $value) {
-            @$obj->post->$key = $value;
+            @$post->$key = $value;
         }
-
+        $obj->post = $post;
         return $obj;
     }
 

@@ -9,9 +9,6 @@ abstract class BaseController
     protected $view;
     protected $views = array();
     protected $auth;
-    protected $errors;
-    protected $inputs;
-    protected $success;
     private $viewPath;
     private $layoutPath;
     private $datos = [];

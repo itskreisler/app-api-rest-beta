@@ -24,7 +24,7 @@ SetEnv TZ America/Bogota
 #Restringe el acceso con contraseña
 #AuthName "Restricted Area"
 #AuthType Basic
-#AuthUserFile C:\xampp\htdocs\coffeexpression-scripts-developer\coffeexpression\public/.htpasswd
+#AuthUserFile C:\xampp\htdocs\app-api-rest-beta\public/.htpasswd
 #require valid-user
 #require user usuario
 </IfModule>

@@ -1,10 +1,11 @@
 <?php
 namespace Core;
 use DateTime;
-class DbLog
+class Log
 {
 
     private $path = '/logs/';
+    private $formate_date = 'Y-m-d h:i:s A';
     public function __construct()
     {
         date_default_timezone_set('America/Bogota');
@@ -18,7 +19,7 @@ class DbLog
         if (is_dir($this->path)) {
             if (!file_exists($log)) {
                 $fh = fopen($log, 'a+') or die("!Error Fatal!");
-                $logcontent = "Hora : " . $date->format('h:i:s') . "\r\n" . $mensaje . "\r\n";
+                $logcontent = "Hora : {$date->format($this->formate_date)}\r\n{$mensaje}";
                 fwrite($fh, $logcontent);
                 fclose($fh);
             } else {
@@ -32,10 +33,8 @@ class DbLog
     }
     private function edit($log, $date, $mensaje)
     {
-        $logcontent = "Hora : " . $date->format('H:i:s') . "\r\n" . $mensaje . "\r\n\r\n";
+        $logcontent = "Hora : {$date->format($this->formate_date)}\r\n{$mensaje}\r\n\r\n";
         $logcontent = $logcontent . file_get_contents($log);
         file_put_contents($log, $logcontent);
     }
 }
-
-?>
