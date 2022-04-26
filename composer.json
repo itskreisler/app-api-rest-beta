@@ -1,13 +1,13 @@
 {
-    "name": "netxoopackage/netxoopackage",
-    "description": "",
+    "name": "app/api",
+    "description": "Aplicacion en php que puede funcionar como api",
     "license": "MIT",
-    "keywords": ["netxoopackage"],
+    "keywords": ["app","api"],
     "type": "project",
     "authors": [
         {
-            "name": "netxoopackage",
-            "email": "netxoopackage@email.com"
+            "name": "app",
+            "email": "app@api.com"
         }
     ],
     "autoload": {
