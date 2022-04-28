@@ -2,3 +2,4 @@
 /vendor
 /core/Simplehtmldom191
 composer.lock
+/DB
